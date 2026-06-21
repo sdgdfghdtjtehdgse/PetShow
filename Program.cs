@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ── База данных ──────────────────────────────────────────────────────────────────
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseSqlite(connectionString));
 
 // ── Регистрация/авторизация ───────────────────────────────────────────────────
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -39,6 +39,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
     await SeedData.InitializeAsync(services);
 }
 

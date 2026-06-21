@@ -13,9 +13,8 @@ namespace PetShow.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "OrganizerId",
                 table: "Shows",
-                type: "varchar(255)",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
+                type: "TEXT",
+                nullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Shows_OrganizerId",
