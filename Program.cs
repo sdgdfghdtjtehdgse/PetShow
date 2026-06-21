@@ -6,9 +6,10 @@ using PetShow.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // ── База данных ──────────────────────────────────────────────────────────────────
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? "Data Source=petshow.db";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseSqlite(connectionString));
 
 // ── Регистрация/авторизация ───────────────────────────────────────────────────
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
