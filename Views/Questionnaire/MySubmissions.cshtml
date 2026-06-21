@@ -1,0 +1,69 @@
+﻿@model IEnumerable<PetShow.Models.ShowQuestionnaire>
+@{
+    ViewData["Title"] = "Мои анкеты";
+}
+
+<div class="container my-5">
+    <h2 class="ps-section-title">
+        <i class="bi bi-clipboard-check text-primary me-2"></i>Мои анкеты
+    </h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="ps-card p-5 text-center text-muted">
+            <i class="bi bi-clipboard-x fs-1 mb-3 d-block"></i>
+            Вы ещё не заполняли анкеты.
+            <div class="mt-3">
+                <a asp-controller="Show" asp-action="Index" class="btn btn-primary">
+                    Смотреть выставки
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var q in Model)
+            {
+                <div class="col-md-6">
+                    <div class="ps-card p-4 h-100">
+                        <h5 class="fw-bold mb-1">@q.Show.Title</h5>
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-clock me-1"></i>
+                            Отправлено: @q.SubmittedAt.ToString("dd MMM yyyy HH:mm")
+                        </p>
+
+                        <ul class="list-unstyled small text-muted mb-0">
+                            <li><i class="bi bi-heart me-2"></i><strong>@q.PetName</strong> — @q.PetSpecies, @q.PetBreed, @q.PetAge л.</li>
+                            <li class="mt-1">
+                                <i class="bi bi-shield-check me-2"></i>
+                                Вакцинирован:
+                                <span class="@(q.IsVaccinated ? "text-success" : "text-danger") fw-semibold">
+                                    @(q.IsVaccinated ? "Да" : "Нет")
+                                </span>
+                            </li>
+                            @if (q.HasSpecialNeeds)
+                            {
+                                <li class="mt-1">
+                                    <i class="bi bi-exclamation-circle me-2 text-warning"></i>
+                                    Особые потребности: @q.SpecialNeedsDetails
+                                </li>
+                            }
+                            @if (!string.IsNullOrEmpty(q.AdditionalInfo))
+                            {
+                                <li class="mt-1 fst-italic border-start border-3 ps-2">
+                                    "@q.AdditionalInfo"
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

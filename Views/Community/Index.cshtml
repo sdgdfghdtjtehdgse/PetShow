@@ -1,0 +1,119 @@
+﻿@model IEnumerable<PetShow.Models.Post>
+@{
+    ViewData["Title"] = "Форум";
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="ps-section-title mb-0">
+            <i class="bi bi-people text-primary me-2"></i>Форум
+        </h2>
+        @if (User.Identity!.IsAuthenticated)
+        {
+            <a asp-action="CreatePost" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i>Новый пост
+            </a>
+        }
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="ps-card p-5 text-center text-muted">
+            <i class="bi bi-chat-square-text fs-1 mb-3 d-block"></i>
+            Постов пока нет. Станьте первым, кто напишет пост!
+            @if (User.Identity!.IsAuthenticated)
+            {
+                <div class="mt-3">
+                    <a asp-action="CreatePost" class="btn btn-primary">Написать пост</a>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var post in Model)
+            {
+                <div class="ps-card p-4">
+                    @if (post.IsPinned)
+                    {
+                        <span class="badge bg-warning text-dark mb-2">
+                            <i class="bi bi-pin-angle-fill me-1"></i>Закреплено
+                        </span>
+                    }
+
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            @if (!string.IsNullOrEmpty(post.User.AvatarUrl))
+                            {
+                                <img src="@post.User.AvatarUrl" alt="@post.User.FullName"
+                                     class="rounded-circle"
+                                     style="width:42px;height:42px;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <div class="rounded-circle bg-light d-flex align-items-center
+                                            justify-content-center"
+                                     style="width:42px;height:42px;">
+                                    <i class="bi bi-person-fill text-muted"></i>
+                                </div>
+                            }
+                            <div>
+                                <div class="fw-semibold">@post.User.FullName</div>
+                                <div class="text-muted small">
+                                    @post.CreatedAt.ToString("dd MMM yyyy · HH:mm")
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (User.Identity!.IsAuthenticated &&
+                             (post.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin")))
+                        {
+                            <form method="post" asp-action="DeletePost" asp-route-id="@post.Id">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-link text-danger p-0 small"
+                                        onclick="return confirm('Удалить этот пост?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        }
+                    </div>
+
+                    <h5 class="fw-bold mb-1">@post.Title</h5>
+                    <p class="text-muted mb-2">
+                        @(post.Body.Length > 200 ? post.Body[..200] + "…" : post.Body)
+                    </p>
+
+                    @if (!string.IsNullOrEmpty(post.ImageUrl))
+                    {
+                        <img src="@post.ImageUrl" alt="Изображение"
+                             class="img-fluid rounded mb-2"
+                             style="max-height:300px;object-fit:cover;" />
+                    }
+
+                    <div class="d-flex align-items-center gap-2 mt-2">
+                        <a asp-action="PostDetail" asp-route-id="@post.Id"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-chat me-1"></i>
+                            @post.Comments.Count Комментари@(post.Comments.Count == 1 ? "й" : post.Comments.Count is >= 2 and <= 4 ? "я" : "ев")
+                        </a>
+                        <span class="text-muted small">
+                            <i class="bi bi-heart@(post.Likes.Count > 0 ? "-fill text-danger" : "") me-1"></i>
+                            @post.Likes.Count
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@inject Microsoft.AspNetCore.Identity.UserManager<PetShow.Models.ApplicationUser> _userManager

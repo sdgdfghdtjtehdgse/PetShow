@@ -1,0 +1,111 @@
+﻿@model IEnumerable<PetShow.Models.Show>
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<!-- ── Герой ──────────────────────────────────────────────────────────────── -->
+<section class="ps-hero">
+    <div class="container text-center">
+        <h1>🐾 Добро пожаловать в PetShow</h1>
+        <p class="mb-4">Найдите для себя подходящую выставку, познакомьтесь с сообществом и празднуйте победы своих пушистых друзей!</p>
+        <a asp-controller="Show" asp-action="Index" class="btn btn-primary btn-lg me-2">
+            <i class="bi bi-calendar-event me-1"></i> Смотреть выставки
+        </a>
+        @if (!User.Identity!.IsAuthenticated)
+        {
+            <a asp-area="Identity" asp-page="/Account/Register"
+               class="btn btn-outline-primary btn-lg">
+                Присоединиться к сообществу
+            </a>
+        }
+    </div>
+</section>
+
+<!-- ── Ближайшие выставки ─────────────────────────────────────────────────── -->
+<section class="container my-5">
+    <h2 class="ps-section-title">
+        <i class="bi bi-calendar2-check text-primary me-2"></i> Ближайшие выставки
+    </h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Нет ближайших выставок, зайдите позже!
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var show in Model)
+            {
+                <div class="col-md-4">
+                    <div class="ps-card ps-show-card h-100">
+                        @if (!string.IsNullOrEmpty(show.PosterUrl))
+                        {
+                            <img src="@show.PosterUrl" alt="@show.Title" />
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center bg-light"
+                                 style="height:180px; border-radius:12px 12px 0 0;">
+                                <i class="bi bi-image text-muted" style="font-size:3rem;"></i>
+                            </div>
+                        }
+                        <div class="p-3">
+                            <div class="mb-2">
+                                <span class="ps-tag">@show.Theme</span>
+                                <span class="ps-tag-accent ms-1">@show.AllowedAnimals</span>
+                            </div>
+                            <h5 class="fw-bold mb-1">@show.Title</h5>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>@show.Venue.City
+                                &nbsp;·&nbsp;
+                                <i class="bi bi-calendar me-1"></i>
+                                @show.StartDate.ToString("dd MMM yyyy")
+                            </p>
+                            <a asp-controller="Show" asp-action="Detail"
+                               asp-route-id="@show.Id"
+                               class="btn btn-outline-primary btn-sm">
+                                Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="text-center mt-4">
+        <a asp-controller="Show" asp-action="Index" class="btn btn-primary">
+            Все выставки <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+</section>
+
+<!-- ── Возможности ────────────────────────────────────────────────────────── -->
+<section class="bg-white border-top border-bottom py-5 my-4">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-3">
+                <i class="bi bi-search fs-2 text-primary mb-2"></i>
+                <h6 class="fw-bold">Найдите выставку</h6>
+                <p class="text-muted small">Фильтруйте по теме, виду животного или городу.</p>
+            </div>
+            <div class="col-md-3">
+                <i class="bi bi-trophy fs-2 text-warning mb-2"></i>
+                <h6 class="fw-bold">Смотрите рейтинги</h6>
+                <p class="text-muted small">Узнайте, кто победил на каждой выставке.</p>
+            </div>
+            <div class="col-md-3">
+                <i class="bi bi-star fs-2 text-primary mb-2"></i>
+                <h6 class="fw-bold">Оценивайте места</h6>
+                <p class="text-muted small">Оставляйте отзывы о местах проведения выставок.</p>
+            </div>
+            <div class="col-md-3">
+                <i class="bi bi-people fs-2 text-primary mb-2"></i>
+                <h6 class="fw-bold">Вступайте в сообщество</h6>
+                <p class="text-muted small">Общайтесь с другими любителями питомцев.</p>
+            </div>
+        </div>
+    </div>
+</section>

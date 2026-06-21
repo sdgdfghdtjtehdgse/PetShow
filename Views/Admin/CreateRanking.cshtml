@@ -1,0 +1,64 @@
+﻿@model PetShow.Models.Ranking
+@{ ViewData["Title"] = "Добавить в рейтинг"; }
+
+<div class="container my-5" style="max-width:560px;">
+    <a asp-controller="Admin" asp-action="Rankings" class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к рейтингам
+    </a>
+    <div class="ps-card p-4">
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-trophy text-warning me-2"></i>Добавить запись в рейтинг
+        </h2>
+        <form method="post" asp-controller="Admin" asp-action="CreateRanking">
+            @Html.AntiForgeryToken()
+            <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                    <label asp-for="ShowId" class="form-label fw-semibold">Выставка</label>
+                    <select asp-for="ShowId" class="form-select" required>
+                        <option value="">-- Выберите выставку --</option>
+                        @foreach (var s in ViewBag.Shows)
+                        {
+                            <option value="@s.Id">@s.Title</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="PetId" class="form-label fw-semibold">Питомец</label>
+                    <select asp-for="PetId" class="form-select" required>
+                        <option value="">-- Выберите питомца --</option>
+                        @foreach (var p in ViewBag.Pets)
+                        {
+                            <option value="@p.Id">@p.Name (@p.Species)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="Position" class="form-label fw-semibold">Место</label>
+                    <input asp-for="Position" type="number" min="1"
+                           class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="Category" class="form-label fw-semibold">Категория</label>
+                    <input asp-for="Category" class="form-control"
+                           placeholder="например, Лучшая порода" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="AwardTitle" class="form-label fw-semibold">
+                        Название награды <span class="text-muted fw-normal">(необязательно)</span>
+                    </label>
+                    <input asp-for="AwardTitle" class="form-control"
+                           placeholder="например, Золото, Чемпион" />
+                </div>
+                <div class="col-12">
+                    <label asp-for="Notes" class="form-label fw-semibold">
+                        Примечания <span class="text-muted fw-normal">(необязательно)</span>
+                    </label>
+                    <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-plus-lg me-1"></i>Добавить в рейтинг
+            </button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+﻿@model PetShow.Models.Post
+@{
+    ViewData["Title"] = "Новый пост";
+}
+
+<div class="container my-5" style="max-width:620px;">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к ленте
+    </a>
+
+    <div class="ps-card p-4">
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-pencil-square text-primary me-2"></i>Новый пост
+        </h2>
+
+        <form method="post" asp-action="CreatePost">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label fw-semibold">Заголовок</label>
+                <input asp-for="Title" class="form-control"
+                       placeholder="Придумайте заголовок для поста..." required />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Body" class="form-label fw-semibold">Содержание</label>
+                <textarea asp-for="Body" class="form-control" rows="6"
+                          placeholder="Поделитесь мыслями, историями или просто поболтайте с сообществом..."
+                          required></textarea>
+                <span asp-validation-for="Body" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="ImageUrl" class="form-label fw-semibold">
+                    Ссылка на изображение <span class="text-muted fw-normal">(необязательно)</span>
+                </label>
+                <input asp-for="ImageUrl" class="form-control"
+                       placeholder="https://example.com/image.jpg" />
+                <div class="form-text">Вставьте ссылку на изображение для вашего поста!</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-send me-1"></i>Опубликовать
+            </button>
+        </form>
+    </div>
+</div>

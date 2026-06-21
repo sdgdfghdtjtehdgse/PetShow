@@ -1,0 +1,335 @@
+﻿@model PetShow.Models.Show
+@{
+ViewData["Title"] = Model.Title;
+var avgRating = Model.Venue.Reviews.Any()
+? Model.Venue.Reviews.Average(r => r.Rating)
+: 0;
+var currentUserId = Context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+var userAlreadyReviewed = currentUserId != null &&
+Model.Venue.Reviews.Any(r => r.UserId == currentUserId);
+}
+
+<div class="container my-5">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к выставкам
+    </a>
+
+    <div class="row g-4">
+        <!-- ── Левая часть: информация о выставке ─────────────────────── -->
+        <div class="col-lg-8">
+            <div class="ps-card p-4 mb-4">
+                <div class="mb-3">
+                    <span class="ps-tag fs-6">@Model.Theme</span>
+                    <span class="ps-tag-accent ms-2">@Model.AllowedAnimals</span>
+                </div>
+
+                <h1 class="fw-bold mb-3">@Model.Title</h1>
+                <p class="text-muted">@Model.Description</p>
+
+                <hr />
+
+                <div class="row g-3 text-muted small">
+                    <div class="col-sm-6">
+                        <i class="bi bi-calendar-check text-primary me-2"></i>
+                        <strong>Начало:</strong> @Model.StartDate.ToString("dddd, dd MMMM yyyy HH:mm")
+                    </div>
+                    <div class="col-sm-6">
+                        <i class="bi bi-calendar-x text-primary me-2"></i>
+                        <strong>Конец:</strong> @Model.EndDate.ToString("dddd, dd MMMM yyyy HH:mm")
+                    </div>
+                    <div class="col-sm-6">
+                        <i class="bi bi-geo-alt text-primary me-2"></i>
+                        <strong>Место:</strong> @Model.Venue.Name
+                    </div>
+                    <div class="col-sm-6">
+                        <i class="bi bi-pin-map text-primary me-2"></i>
+                        <strong>Город:</strong> @Model.Venue.City, @Model.Venue.Country
+                    </div>
+                    <div class="col-sm-6">
+                        <i class="bi bi-people text-primary me-2"></i>
+                        <strong>Вместимость:</strong> @Model.MaxParticipants участников
+                    </div>
+                    <div class="col-sm-6">
+                        <i class="bi bi-check-circle text-primary me-2"></i>
+                        <strong>Зарегистрировано:</strong>
+                        @Model.Bookings.Count(b => b.Status == PetShow.Models.BookingStatus.Confirmed) подтверждено
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Победители ──────────────────────────────────────────── -->
+            @if (Model.Rankings.Any())
+            {
+            <div class="ps-card p-4 mb-4">
+                <h4 class="fw-bold mb-3">
+                    <i class="bi bi-trophy text-warning me-2"></i>Победители
+                </h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th>#</th><th>Питомец</th><th>Категория</th><th>Награда</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var r in Model.Rankings.OrderBy(x => x.Position))
+                        {
+                        <tr>
+                            <td>
+                                @if (r.Position == 1)     { <span class="fs-5">🥇</span> }
+                                else if (r.Position == 2) { <span class="fs-5">🥈</span> }
+                                else if (r.Position == 3) { <span class="fs-5">🥉</span> }
+                                else                      { <span class="text-muted">@r.Position</span> }
+                            </td>
+                            <td class="fw-semibold">@r.Pet.Name</td>
+                            <td><span class="ps-tag">@r.Category</span></td>
+                            <td>@r.AwardTitle</td>
+                        </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
+
+            <!-- ── Отзывы о площадке ───────────────────────────────────── -->
+            <div class="ps-card p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold mb-0">
+                        <i class="bi bi-star text-warning me-2"></i>Отзывы о площадке
+                    </h4>
+                    @if (avgRating > 0)
+                    {
+                    <div class="d-flex align-items-center gap-2">
+                            <span class="ps-stars">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                <i class="bi @(i <= Math.Round(avgRating) ? "bi-star-fill" : "bi-star")"></i>
+                                }
+                            </span>
+                        <span class="fw-bold">@avgRating.ToString("0.0")</span>
+                        <span class="text-muted small">(@Model.Venue.Reviews.Count отз.)</span>
+                    </div>
+                    }
+                </div>
+
+                @if (TempData["ReviewSuccess"] != null)
+                {
+                <div class="alert alert-success alert-dismissible fade show">
+                    @TempData["ReviewSuccess"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                }
+                @if (TempData["ReviewError"] != null)
+                {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    @TempData["ReviewError"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                }
+
+                <!-- Existing reviews list -->
+                @if (!Model.Venue.Reviews.Any())
+                {
+                <p class="text-muted small mb-0">Отзывов об этой площадке пока нет. Станьте первым, кто его напишет!</p>
+                }
+                else
+                {
+                <div class="d-flex flex-column gap-3 mb-2">
+                    @foreach (var review in Model.Venue.Reviews.OrderByDescending(r => r.CreatedAt))
+                    {
+                    <div class="border rounded-3 p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <div>
+                                <span class="fw-semibold">@review.User.FullName</span>
+                                <span class="ps-stars ms-2">
+                                            @for (int i = 1; i <= 5; i++)
+                                    {
+                                    <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star") small"></i>
+                                    }
+                                        </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                        <span class="text-muted small">
+                                            @review.CreatedAt.ToString("dd MMM yyyy")
+                                        </span>
+                                @if (currentUserId == review.UserId || User.IsInRole("Admin"))
+                                {
+                                <form method="post" asp-controller="Review"
+                                      asp-action="Delete"
+                                      asp-route-id="@review.Id"
+                                      asp-route-showId="@Model.Id">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit"
+                                            class="btn btn-link btn-sm p-0 text-danger"
+                                            onclick="return confirm('Удалить этот отзыв?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                                }
+                            </div>
+                        </div>
+                        <div class="fw-semibold small mb-1">@review.Title</div>
+                        <p class="text-muted small mb-0">@review.Body</p>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+
+            <!-- ── Форма отзыва ────────────────────────────────────────── -->
+            @if (User.Identity!.IsAuthenticated)
+            {
+            if (userAlreadyReviewed)
+            {
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Вы уже оставляли отзыв об этом месте.
+            </div>
+            }
+            else
+            {
+            <div class="ps-card p-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-pencil-square text-primary me-2"></i>Оставить отзыв
+                </h5>
+
+                <form method="post" asp-controller="Review" asp-action="Create">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="venueId" value="@Model.VenueId" />
+                    <input type="hidden" name="showId"  value="@Model.Id" />
+
+                    <!-- Star rating picker -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Оценка</label>
+                        <div class="d-flex gap-2" id="starPicker">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                            <i class="bi bi-star fs-4 text-warning star-btn"
+                               data-value="@i"
+                               style="cursor:pointer;"></i>
+                            }
+                        </div>
+                        <input type="hidden" name="rating" id="ratingInput" value="0" />
+                        <div class="form-text">Нажмите на звездочку, чтобы выставить оценку.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Заголовок</label>
+                        <input type="text" name="title" class="form-control"
+                               placeholder="Коротко о впечатлениях..." required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Текст отзыва</label>
+                        <textarea name="body" class="form-control" rows="4"
+                                  placeholder="Расскажите подробнее о месте проведения, организаторах, атмосфере..."
+                                  required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-send me-1"></i>Опубликовать отзыв
+                    </button>
+                </form>
+            </div>
+            }
+            }
+            else
+            {
+            <div class="alert alert-light border">
+                <i class="bi bi-star me-2 text-warning"></i>
+                <a asp-area="Identity" asp-page="/Account/Login" class="fw-semibold">Войдите</a>,
+                чтобы оставить отзыв о месте проведения.
+            </div>
+            }
+        </div>
+
+        <!-- ── Правая часть: действия ──────────────────────────────────── -->
+        <div class="col-lg-4">
+            <div class="ps-card p-4 sticky-top" style="top: 80px;">
+                <h5 class="fw-bold mb-3">Хотите поучаствовать?</h5>
+                @if (User.Identity!.IsAuthenticated)
+                {
+                <a asp-controller="Booking" asp-action="Create"
+                   asp-route-showId="@Model.Id"
+                   class="btn btn-primary w-100 mb-3">
+                    <i class="bi bi-ticket-perforated me-1"></i>Записаться
+                </a>
+                <a asp-controller="Questionnaire" asp-action="Create"
+                   asp-route-showId="@Model.Id"
+                   class="btn btn-outline-primary w-100">
+                    <i class="bi bi-clipboard-check me-1"></i>Заполнить анкету
+                </a>
+                }
+                else
+                {
+                <p class="text-muted small mb-3">
+                    Войдите в аккаунт, чтобы записаться или заполнить анкету.
+                </p>
+                <a asp-area="Identity" asp-page="/Account/Login"
+                   class="btn btn-primary w-100 mb-2">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Войти для записи
+                </a>
+                <a asp-area="Identity" asp-page="/Account/Register"
+                   class="btn btn-outline-primary w-100">
+                    Регистрация
+                </a>
+                }
+
+                <hr />
+
+                <!-- Venue info -->
+                <h6 class="fw-semibold mb-2">Место проведения</h6>
+                <p class="small text-muted mb-3">
+                    <i class="bi bi-building me-1"></i>@Model.Venue.Name<br />
+                    <i class="bi bi-geo me-1"></i>@Model.Venue.Address<br />
+                    @Model.Venue.City, @Model.Venue.Country
+                </p>
+
+                <!-- Average rating in sidebar -->
+                @if (avgRating > 0)
+                {
+                <hr />
+                <h6 class="fw-semibold mb-2">Рейтинг места проведения выставки</h6>
+                <div class="d-flex align-items-center gap-2">
+                        <span class="ps-stars">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                            <i class="bi @(i <= Math.Round(avgRating) ? "bi-star-fill" : "bi-star")"></i>
+                            }
+                        </span>
+                    <span class="fw-bold">@avgRating.ToString("0.0")</span>
+                    <span class="text-muted small">/ 5</span>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Interactive star picker
+    const stars    = document.querySelectorAll('.star-btn');
+    const input    = document.getElementById('ratingInput');
+    let selected   = 0;
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            selected = parseInt(star.dataset.value);
+            input.value = selected;
+            updateStars(selected);
+        });
+        star.addEventListener('mouseenter', () => updateStars(parseInt(star.dataset.value)));
+        star.addEventListener('mouseleave', () => updateStars(selected));
+    });
+
+    function updateStars(value) {
+        stars.forEach(s => {
+            const v = parseInt(s.dataset.value);
+            s.classList.toggle('bi-star-fill', v <= value);
+            s.classList.toggle('bi-star',      v >  value);
+        });
+    }
+</script>
+}

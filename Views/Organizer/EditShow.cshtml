@@ -1,0 +1,92 @@
+﻿@model PetShow.Models.Show
+@{ ViewData["Title"] = "Редактировать выставку"; }
+
+<div class="container my-5" style="max-width:640px;">
+    <a asp-controller="Organizer" asp-action="Index"
+       class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к моим выставкам
+    </a>
+
+    <div class="ps-card p-4">
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-pencil-square text-info me-2"></i>Редактировать выставку
+        </h2>
+
+        <form method="post" asp-controller="Organizer"
+              asp-action="EditShow" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="CreatedAt" type="hidden" />
+            <input asp-for="OrganizerId" type="hidden" />
+
+            <div class="row g-3 mb-3">
+                <div class="col-12">
+                    <label asp-for="Title" class="form-label fw-semibold">Название</label>
+                    <input asp-for="Title" class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="Theme" class="form-label fw-semibold">Тема</label>
+                    <input asp-for="Theme" class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="AllowedAnimals" class="form-label fw-semibold">
+                        Допустимые питомцы
+                    </label>
+                    <input asp-for="AllowedAnimals" class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="StartDate" class="form-label fw-semibold">
+                        Дата и время начала
+                    </label>
+                    <input asp-for="StartDate" type="datetime-local" class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="EndDate" class="form-label fw-semibold">
+                        Дата и время окончания
+                    </label>
+                    <input asp-for="EndDate" type="datetime-local" class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="MaxParticipants" class="form-label fw-semibold">
+                        Макс. участников
+                    </label>
+                    <input asp-for="MaxParticipants" type="number" min="1" class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="VenueId" class="form-label fw-semibold">Место проведения</label>
+                    <select asp-for="VenueId" class="form-select" required>
+                        <option value="">-- Выберите место --</option>
+                        @foreach (var v in ViewBag.Venues)
+                        {
+                            <option value="@v.Id"
+                                    selected="@(v.Id == Model.VenueId ? "selected" : null)">
+                                @v.Name, @v.City
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label fw-semibold">Описание</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="col-12">
+                    <label asp-for="PosterUrl" class="form-label fw-semibold">
+                        Ссылка на фотографию <span class="text-muted fw-normal">(необязательно)</span>
+                    </label>
+                    <input asp-for="PosterUrl" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <div class="form-check form-switch">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsActive" class="form-check-label fw-semibold">
+                            Активна (видна пользователям)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-check-lg me-1"></i>Сохранить изменения
+            </button>
+        </form>
+    </div>
+</div>
