@@ -1,0 +1,20 @@
+﻿@page
+@model PetShow.Areas.Identity.Pages.Account.LogoutModel
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Выход";
+}
+
+<div class="container my-5 text-center" style="max-width:400px; margin: auto;">
+    <div class="ps-card p-5">
+        <i class="bi bi-box-arrow-right text-muted" style="font-size:3rem;"></i>
+        <h4 class="fw-bold mt-3">Вы вышли из аккаунта</h4>
+        <p class="text-muted small">До свидания! Ждем вас снова на платформе.</p>
+        <a asp-page="/Account/Login" asp-area="Identity" class="btn btn-primary mt-2">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Войти снова
+        </a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary mt-2 ms-2">
+            На главную
+        </a>
+    </div>
+</div>

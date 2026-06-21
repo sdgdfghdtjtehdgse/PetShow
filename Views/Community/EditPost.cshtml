@@ -1,0 +1,52 @@
+﻿@model PetShow.Models.Post
+@{
+    ViewData["Title"] = "Редактировать пост";
+}
+
+<div class="container my-5" style="max-width:620px;">
+    <a asp-action="PostDetail" asp-route-id="@Model.Id"
+       class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к посту
+    </a>
+
+    <div class="ps-card p-4">
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-pencil-square text-primary me-2"></i>Редактировать пост
+        </h2>
+
+        <form method="post" asp-action="EditPost" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Заголовок</label>
+                <input name="title" value="@Model.Title"
+                       class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Содержание</label>
+                <textarea name="body" class="form-control" rows="8"
+                          required>@Model.Body</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    Ссылка на изображение <span class="text-muted fw-normal">(необязательно)</span>
+                </label>
+                <input name="imageUrl" value="@Model.ImageUrl"
+                       class="form-control"
+                       placeholder="https://example.com/image.jpg" />
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="bi bi-check-lg me-1"></i>Сохранить изменения
+                </button>
+                <a asp-action="PostDetail" asp-route-id="@Model.Id"
+                   class="btn btn-outline-secondary">
+                    Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

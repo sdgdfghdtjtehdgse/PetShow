@@ -1,0 +1,101 @@
+﻿@model IEnumerable<PetShow.Models.Show>
+@{
+    ViewData["Title"] = "Выставки";
+}
+
+<div class="container my-5">
+    <h2 class="ps-section-title">
+        <i class="bi bi-calendar-event text-primary me-2"></i>Все выставки
+    </h2>
+
+    <!-- ── Фильтры ──────────────────────────────────────────────────────── -->
+    <form method="get" class="ps-card p-3 mb-4">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold">Тема</label>
+                <select name="theme" class="form-select form-select-sm">
+                    <option value="">Все темы</option>
+                    @foreach (var t in ViewBag.Themes)
+                    {
+                        <option value="@t" selected="@(ViewBag.Theme == t ? "selected" : null)">@t</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold">Животное</label>
+                <select name="animal" class="form-select form-select-sm">
+                    <option value="">Все животные</option>
+                    @foreach (var a in ViewBag.Animals)
+                    {
+                        <option value="@a" selected="@(ViewBag.Animal == a ? "selected" : null)">@a</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold">Город</label>
+                <select name="city" class="form-select form-select-sm">
+                    <option value="">Все города</option>
+                    @foreach (var c in ViewBag.Cities)
+                    {
+                        <option value="@c" selected="@(ViewBag.City == c ? "selected" : null)">@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-funnel me-1"></i>Найти
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- ── Список выставок ──────────────────────────────────────────────── -->
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">По вашему запросу выставок не найдено!</div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var show in Model)
+            {
+                <div class="col-md-4">
+                    <div class="ps-card ps-show-card h-100">
+                        @if (!string.IsNullOrEmpty(show.PosterUrl))
+                        {
+                            <img src="@show.PosterUrl" alt="@show.Title" />
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center bg-light"
+                                 style="height:180px; border-radius:12px 12px 0 0;">
+                                <i class="bi bi-image text-muted" style="font-size:3rem;"></i>
+                            </div>
+                        }
+                        <div class="p-3">
+                            <div class="mb-2">
+                                <span class="ps-tag">@show.Theme</span>
+                                <span class="ps-tag-accent ms-1">@show.AllowedAnimals</span>
+                            </div>
+                            <h5 class="fw-bold mb-1">@show.Title</h5>
+                            <p class="text-muted small mb-1">
+                                <i class="bi bi-geo-alt me-1"></i>@show.Venue.Name, @show.Venue.City
+                            </p>
+                            <p class="text-muted small mb-1">
+                                <i class="bi bi-calendar me-1"></i>
+                                @show.StartDate.ToString("dd MMM") – @show.EndDate.ToString("dd MMM yyyy")
+                            </p>
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-people me-1"></i>Макс. @show.MaxParticipants участников
+                            </p>
+                            <a asp-action="Detail" asp-route-id="@show.Id"
+                               class="btn btn-outline-primary btn-sm">
+                                Подробнее <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

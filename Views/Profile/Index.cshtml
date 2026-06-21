@@ -1,0 +1,215 @@
+﻿@model PetShow.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Мой профиль";
+    var pets           = ViewBag.Pets           as List<PetShow.Models.Pet>;
+    var bookings       = ViewBag.Bookings       as List<PetShow.Models.Booking>;
+    var questionnaires = ViewBag.Questionnaires as List<PetShow.Models.ShowQuestionnaire>;
+}
+
+<div class="container my-5">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <!-- ── Левая часть: карточка профиля ──────────────────────────── -->
+        <div class="col-lg-3">
+            <div class="ps-card p-4 text-center">
+                @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                {
+                    <img src="@Model.AvatarUrl" alt="Аватар"
+                         class="rounded-circle mb-3"
+                         style="width:90px;height:90px;object-fit:cover;" />
+                }
+                else
+                {
+                    <div class="rounded-circle bg-light d-flex align-items-center
+                                justify-content-center mx-auto mb-3"
+                         style="width:90px;height:90px;">
+                        <i class="bi bi-person-fill text-muted" style="font-size:2.5rem;"></i>
+                    </div>
+                }
+
+                <h5 class="fw-bold mb-0">@Model.FullName</h5>
+                <p class="text-muted small mb-2">@Model.Email</p>
+
+                @if (!string.IsNullOrEmpty(Model.Bio))
+                {
+                    <p class="small text-muted fst-italic">"@Model.Bio"</p>
+                }
+
+                <a asp-action="Edit" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                    <i class="bi bi-pencil me-1"></i>Редактировать профиль
+                </a>
+            </div>
+
+            <!-- Статистика -->
+            <div class="ps-card p-3 mt-3">
+                <div class="d-flex justify-content-between text-muted small py-1 border-bottom">
+                    <span><i class="bi bi-heart me-1"></i>Питомцы</span>
+                    <strong>@pets!.Count</strong>
+                </div>
+                <div class="d-flex justify-content-between text-muted small py-1 border-bottom">
+                    <span><i class="bi bi-ticket-perforated me-1"></i>Записи</span>
+                    <strong>@bookings!.Count</strong>
+                </div>
+                <div class="d-flex justify-content-between text-muted small py-1">
+                    <span><i class="bi bi-clipboard-check me-1"></i>Анкеты</span>
+                    <strong>@questionnaires!.Count</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Правая часть: основной контент ─────────────────────────── -->
+        <div class="col-lg-9">
+
+            <!-- Мои питомцы -->
+            <div class="ps-card p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-heart text-primary me-2"></i>Мои питомцы
+                    </h5>
+                    <a asp-action="AddPet" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i>Добавить питомца
+                    </a>
+                </div>
+
+                @if (!pets!.Any())
+                {
+                    <p class="text-muted small">Питомцев пока нет. Добавьте своего первого!</p>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @foreach (var pet in pets)
+                        {
+                            <div class="col-sm-6 col-md-4">
+                                <div class="border rounded-3 p-3 h-100 position-relative">
+                                    @if (!string.IsNullOrEmpty(pet.PhotoUrl))
+                                    {
+                                        <img src="@pet.PhotoUrl" alt="@pet.Name"
+                                             class="rounded-circle mb-2"
+                                             style="width:52px;height:52px;object-fit:cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle bg-light d-flex align-items-center
+                                                    justify-content-center mb-2"
+                                             style="width:52px;height:52px;">
+                                            <i class="bi bi-heart-fill text-muted"></i>
+                                        </div>
+                                    }
+                                    <h6 class="fw-bold mb-0">@pet.Name</h6>
+                                    <p class="text-muted small mb-2">
+                                        @pet.Species · @pet.Breed · @pet.Age л.
+                                    </p>
+                                    <div class="d-flex gap-1">
+                                        <a asp-action="EditPet" asp-route-id="@pet.Id"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form method="post" asp-action="DeletePet"
+                                              asp-route-id="@pet.Id">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    onclick="return confirm('Удалить @pet.Name?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Последние записи -->
+            <div class="ps-card p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-ticket-perforated text-primary me-2"></i>Последние записи
+                    </h5>
+                    <a asp-controller="Booking" asp-action="MyBookings"
+                       class="btn btn-outline-primary btn-sm">Все записи</a>
+                </div>
+
+                @if (!bookings!.Any())
+                {
+                    <p class="text-muted small">Записей пока нет.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Выставка</th>
+                                    <th>Питомец</th>
+                                    <th>Дата</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var b in bookings)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@b.Show.Title</td>
+                                        <td>@b.Pet.Name</td>
+                                        <td>@b.Show.StartDate.ToString("dd MMM yyyy")</td>
+                                        <td>
+                                            <span class="badge rounded-pill
+                                                @(b.Status == PetShow.Models.BookingStatus.Confirmed ? "bg-success" :
+                                                  b.Status == PetShow.Models.BookingStatus.Pending   ? "bg-warning text-dark" :
+                                                  "bg-secondary")">
+                                                @(b.Status == PetShow.Models.BookingStatus.Confirmed ? "Подтверждено" :
+                                                  b.Status == PetShow.Models.BookingStatus.Pending   ? "Ожидание" : "Отменено")
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+
+            <!-- Последние анкеты -->
+            <div class="ps-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-clipboard-check text-primary me-2"></i>Последние анкеты
+                    </h5>
+                    <a asp-controller="Questionnaire" asp-action="MySubmissions"
+                       class="btn btn-outline-primary btn-sm">Все анкеты</a>
+                </div>
+
+                @if (!questionnaires!.Any())
+                {
+                    <p class="text-muted small">Анкет пока нет.</p>
+                }
+                else
+                {
+                    <ul class="list-unstyled mb-0">
+                        @foreach (var q in questionnaires)
+                        {
+                            <li class="border-bottom py-2 small text-muted">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <strong>@q.PetName</strong> — @q.Show.Title
+                                <span class="float-end">@q.SubmittedAt.ToString("dd MMM yyyy")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

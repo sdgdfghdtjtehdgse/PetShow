@@ -1,0 +1,57 @@
+﻿@page
+@model PetShow.Areas.Identity.Pages.Account.LoginModel
+@{
+Layout = "/Views/Shared/_Layout.cshtml";
+ViewData["Title"] = "Вход";
+}
+
+<div class="container my-5" style="max-width:480px;">
+    <div class="ps-card p-4">
+        <div class="text-center mb-4">
+            <i class="bi bi-award-fill text-primary" style="font-size:2.5rem;"></i>
+            <h2 class="fw-bold mt-2 mb-0">Вход в аккаунт</h2>
+            <p class="text-muted small">И снова добро пожаловать!</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+        }
+
+        <form method="post" asp-page="/Account/Login" asp-area="Identity">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" name="Input.Email" value="@Model.Input?.Email"
+                       class="form-control" placeholder="вы@example.com" required autofocus />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Пароль</label>
+                <input type="password" name="Input.Password"
+                       class="form-control" placeholder="••••••••" required />
+            </div>
+
+            <div class="mb-4 form-check">
+                <input type="checkbox" name="Input.RememberMe" class="form-check-input"
+                       id="rememberMe" value="true" />
+                <label class="form-check-label small" for="rememberMe">Запомнить меня</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Войти
+            </button>
+        </form>
+
+        <hr />
+
+        <div class="text-center small text-muted">
+            Нет аккаунта?
+            <a asp-page="/Account/Register" asp-area="Identity" class="fw-semibold">
+                Зарегистрироваться
+            </a>
+        </div>
+    </div>
+</div>

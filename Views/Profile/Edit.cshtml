@@ -1,0 +1,48 @@
+﻿@model PetShow.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Редактировать профиль";
+}
+
+<div class="container my-5" style="max-width:560px;">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к профилю
+    </a>
+
+    <div class="ps-card p-4">
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-pencil-square text-primary me-2"></i>Редактировать профиль
+        </h2>
+
+        <form method="post" asp-action="Edit">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Полное имя</label>
+                <input name="fullName" value="@Model.FullName"
+                       class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    Ссылка на аватар <span class="text-muted fw-normal">(необязательно)</span>
+                </label>
+                <input name="avatarUrl" value="@Model.AvatarUrl"
+                       class="form-control"
+                       placeholder="https://example.com/ваше-фото.jpg" />
+                <div class="form-text">Вставьте ссылку на фото профиля.</div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    О себе <span class="text-muted fw-normal">(необязательно)</span>
+                </label>
+                <textarea name="bio" class="form-control" rows="3"
+                          placeholder="Расскажите сообществу о себе и своих питомцах...">@Model.Bio</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-check-lg me-1"></i>Сохранить изменения
+            </button>
+        </form>
+    </div>
+</div>

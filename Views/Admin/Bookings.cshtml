@@ -1,0 +1,85 @@
+﻿@model IEnumerable<PetShow.Models.Booking>
+@{ ViewData["Title"] = "Админ — Записи"; }
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="ps-section-title mb-0">
+            <i class="bi bi-ticket-perforated text-primary me-2"></i>Записи на выставки
+        </h2>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Панель
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="ps-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Пользователь</th><th>Выставка</th><th>Питомец</th>
+                        <th>Дата</th><th>Статус</th><th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td>@b.User.FullName</td>
+                            <td class="small">@b.Show.Title</td>
+                            <td>@b.Pet.Name</td>
+                            <td class="text-muted small">@b.BookedAt.ToString("dd MMM yyyy")</td>
+                            <td>
+                                <span class="badge rounded-pill
+                                    @(b.Status == PetShow.Models.BookingStatus.Confirmed ? "bg-success" :
+                                      b.Status == PetShow.Models.BookingStatus.Pending   ? "bg-warning text-dark" :
+                                      "bg-secondary")">
+                                    @(b.Status == PetShow.Models.BookingStatus.Confirmed ? "Подтверждено" :
+                                      b.Status == PetShow.Models.BookingStatus.Pending   ? "Ожидание" : "Отменено")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1 flex-wrap">
+                                    @foreach (var status in Enum.GetValues<PetShow.Models.BookingStatus>())
+                                    {
+                                        if (status != b.Status)
+                                        {
+                                            <form method="post"
+                                                  asp-controller="Admin"
+                                                  asp-action="UpdateBookingStatus"
+                                                  asp-route-id="@b.Id">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="status" value="@status" />
+                                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                    → @(status == PetShow.Models.BookingStatus.Confirmed ? "Подтвердить" :
+                                                        status == PetShow.Models.BookingStatus.Pending   ? "Ожидание" : "Отменить")
+                                                </button>
+                                            </form>
+                                        }
+                                    }
+                                    <form method="post"
+                                          asp-controller="Admin"
+                                          asp-action="DeleteBooking"
+                                          asp-route-id="@b.Id">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                onclick="return confirm('Удалить эту запись?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

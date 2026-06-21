@@ -1,0 +1,16 @@
+﻿# Build output
+bin/
+obj/
+
+# Rider IDE files
+.idea/
+*.user
+
+# ASP.NET
+appsettings.Development.json
+
+# Файлы ОС
+.DS_Store
+Thumbs.db
+
+appsettings.json

@@ -1,0 +1,215 @@
+﻿@{
+    ViewData["Title"] = "Панель администратора";
+    var recentBookings = ViewBag.RecentBookings as List<PetShow.Models.Booking>;
+}
+
+<div class="container my-5">
+    <h2 class="ps-section-title">
+        <i class="bi bi-shield-lock text-danger me-2"></i>Панель администратора
+    </h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Статистика -->
+    <div class="row g-3 mb-5">
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Users" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-people text-primary fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.UserCount</div>
+                    <div class="text-muted small">Пользователи</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Shows" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-calendar-event text-success fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.ShowCount</div>
+                    <div class="text-muted small">Выставки</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Venues" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-building text-info fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.VenueCount</div>
+                    <div class="text-muted small">Места проведения</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Bookings" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-ticket-perforated text-warning fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.BookingCount</div>
+                    <div class="text-muted small">Записи</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Pets" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-heart text-danger fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.PetCount</div>
+                    <div class="text-muted small">Питомцы</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Posts" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-chat-square-text text-secondary fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.PostCount</div>
+                    <div class="text-muted small">Посты</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Questionnaires" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-clipboard-check text-primary fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.QuestionnaireCount</div>
+                    <div class="text-muted small">Анкеты</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Rankings" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-trophy text-warning fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.RankingCount</div>
+                    <div class="text-muted small">Рейтинги</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Reviews" class="text-decoration-none">
+                <div class="ps-card p-3 text-center h-100">
+                    <i class="bi bi-star text-warning fs-2 mb-2 d-block"></i>
+                    <div class="fs-3 fw-bold">@ViewBag.ReviewCount</div>
+                    <div class="text-muted small">Отзывы</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Быстрая навигация -->
+    <h5 class="fw-bold mb-3">Управление</h5>
+    <div class="row g-3 mb-5">
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Venues"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-building text-primary fs-5"></i>
+                <span class="fw-semibold">Места проведения</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Shows"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-calendar-event text-primary fs-5"></i>
+                <span class="fw-semibold">Выставки</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Bookings"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-ticket-perforated text-primary fs-5"></i>
+                <span class="fw-semibold">Записи</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Rankings"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-trophy text-primary fs-5"></i>
+                <span class="fw-semibold">Рейтинги</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Questionnaires"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-clipboard-check text-primary fs-5"></i>
+                <span class="fw-semibold">Анкеты</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Users"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-people text-primary fs-5"></i>
+                <span class="fw-semibold">Пользователи</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Pets"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-heart text-primary fs-5"></i>
+                <span class="fw-semibold">Питомцы</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Posts"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-chat-square-text text-primary fs-5"></i>
+                <span class="fw-semibold">Посты</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="Reviews"
+               class="ps-card p-3 d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-star text-primary fs-5"></i>
+                <span class="fw-semibold">Отзывы</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Последние записи -->
+    <h5 class="fw-bold mb-3">Последние записи</h5>
+    <div class="ps-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Пользователь</th><th>Выставка</th><th>Питомец</th>
+                        <th>Дата</th><th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in recentBookings!)
+                    {
+                        <tr>
+                            <td>@b.User.FullName</td>
+                            <td>@b.Show.Title</td>
+                            <td>@b.Pet.Name</td>
+                            <td class="text-muted small">@b.BookedAt.ToString("dd MMM yyyy")</td>
+                            <td>
+                                <span class="badge rounded-pill
+                                    @(b.Status == PetShow.Models.BookingStatus.Confirmed ? "bg-success" :
+                                      b.Status == PetShow.Models.BookingStatus.Pending   ? "bg-warning text-dark" :
+                                      "bg-secondary")">
+                                    @(b.Status == PetShow.Models.BookingStatus.Confirmed ? "Подтверждено" :
+                                      b.Status == PetShow.Models.BookingStatus.Pending   ? "Ожидание" : "Отменено")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

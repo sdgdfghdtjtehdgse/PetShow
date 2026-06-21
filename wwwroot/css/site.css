@@ -1,0 +1,97 @@
+/* ── Базовая ───────────────────────────────────────────────────────────────────── */
+:root {
+  --ps-primary:   #4A90D9;
+  --ps-accent:    #F5A623;
+  --ps-light-bg:  #F8F9FB;
+  --ps-card-bg:   #FFFFFF;
+  --ps-text:      #2C3E50;
+  --ps-muted:     #7F8C8D;
+  --ps-border:    #E8ECF0;
+  --ps-radius:    12px;
+}
+
+body {
+  background-color: var(--ps-light-bg);
+  color: var(--ps-text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Навигация ─────────────────────────────────────────────────────────────────── */
+.navbar-brand { font-size: 1.4rem; letter-spacing: -0.3px; }
+.nav-link { font-weight: 500; color: var(--ps-text) !important; transition: color .2s; }
+.nav-link:hover { color: var(--ps-primary) !important; }
+
+/* ── Карточки ──────────────────────────────────────────────────────────────────── */
+.ps-card {
+  background: var(--ps-card-bg);
+  border: 1px solid var(--ps-border);
+  border-radius: var(--ps-radius);
+  transition: box-shadow .2s, transform .2s;
+}
+.ps-card:hover {
+  box-shadow: 0 6px 24px rgba(74,144,217,.13);
+  transform: translateY(-2px);
+}
+
+/* ── Герой ───────────────────────────────────────────────────────────────────── */
+.ps-hero {
+  background: linear-gradient(135deg, #e8f4fd 0%, #fef9f0 100%);
+  border-bottom: 1px solid var(--ps-border);
+  padding: 4rem 0 3rem;
+}
+.ps-hero h1 { font-size: 2.8rem; font-weight: 700; color: var(--ps-text); }
+.ps-hero p  { font-size: 1.15rem; color: var(--ps-muted); }
+
+/* ── Теги ──────────────────────────────────────────────────────────── */
+.ps-tag {
+  display: inline-block;
+  background: #EAF3FC;
+  color: var(--ps-primary);
+  border-radius: 20px;
+  padding: 2px 12px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+.ps-tag-accent {
+  background: #FEF3E2;
+  color: var(--ps-accent);
+}
+
+/* ── Кнопки ────────────────────────────────────────────────────────────────── */
+.btn-primary {
+  background-color: var(--ps-primary);
+  border-color: var(--ps-primary);
+  border-radius: 8px;
+}
+.btn-primary:hover {
+  background-color: #3a7fc1;
+  border-color: #3a7fc1;
+}
+.btn-outline-primary {
+  color: var(--ps-primary);
+  border-color: var(--ps-primary);
+  border-radius: 8px;
+}
+
+/* ── УТП ───────────────────────────────────────────────────────── */
+.ps-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ps-text);
+  margin-bottom: 1.25rem;
+}
+
+/* ── Рейтинг в звездах ────────────────────────────────────────────────────────────── */
+.ps-stars { color: var(--ps-accent); }
+
+/* ── Лист ─────────────────────────────────────────────────────────── */
+.ps-show-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: var(--ps-radius) var(--ps-radius) 0 0;
+}
+
+/* ── Ошибки ────────────────────────────────────────────────────────────────── */
+.text-primary { color: var(--ps-primary) !important; }
+.bg-primary   { background-color: var(--ps-primary) !important; }

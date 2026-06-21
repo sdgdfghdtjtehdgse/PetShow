@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Запись на выставку";
+    var show = ViewBag.Show as PetShow.Models.Show;
+    var pets = ViewBag.Pets as List<PetShow.Models.Pet>;
+}
+
+<div class="container my-5" style="max-width:620px;">
+    <a asp-controller="Show" asp-action="Detail" asp-route-id="@show!.Id"
+       class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к выставке
+    </a>
+
+    <div class="ps-card p-4">
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-ticket-perforated text-primary me-2"></i>Запись на выставку
+        </h2>
+        <p class="text-muted mb-4">
+            Вы записываетесь на <strong>@show.Title</strong><br />
+            <i class="bi bi-geo-alt me-1"></i>@show.Venue.Name, @show.Venue.City &nbsp;·&nbsp;
+            <i class="bi bi-calendar me-1"></i>@show.StartDate.ToString("dd MMM yyyy")
+        </p>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @if (pets == null || !pets.Any())
+        {
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                У вас пока нет зарегистрированных питомцев.
+                <a asp-controller="Profile" asp-action="AddPet" class="alert-link">Добавьте питомца</a>
+                перед записью на выставку.
+            </div>
+        }
+        else
+        {
+            <form method="post" asp-action="Create">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="showId" value="@show.Id" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Выберите питомца</label>
+                    <select name="petId" class="form-select" required>
+                        <option value="">-- Выберите питомца --</option>
+                        @foreach (var pet in pets!)
+                        {
+                            <option value="@pet.Id">@pet.Name (@pet.Species – @pet.Breed)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Примечания <span class="text-muted fw-normal">(необязательно)</span></label>
+                    <textarea name="notes" class="form-control" rows="3"
+                              placeholder="Любые пожелания для организаторов..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-check-lg me-1"></i>Подтвердить запись
+                </button>
+            </form>
+        }
+    </div>
+</div>

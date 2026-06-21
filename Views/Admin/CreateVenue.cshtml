@@ -1,0 +1,48 @@
+﻿@model PetShow.Models.Venue
+@{ ViewData["Title"] = "Добавить место"; }
+
+<div class="container my-5" style="max-width:600px;">
+    <a asp-controller="Admin" asp-action="Venues" class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к местам
+    </a>
+    <div class="ps-card p-4">
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-building text-primary me-2"></i>Добавить место
+        </h2>
+        <form method="post" asp-controller="Admin" asp-action="CreateVenue">
+            @Html.AntiForgeryToken()
+            <div class="row g-3 mb-3">
+                <div class="col-12">
+                    <label asp-for="Name" class="form-label fw-semibold">Название места</label>
+                    <input asp-for="Name" class="form-control" required />
+                </div>
+                <div class="col-12">
+                    <label asp-for="Address" class="form-label fw-semibold">Адрес</label>
+                    <input asp-for="Address" class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="City" class="form-label fw-semibold">Город</label>
+                    <input asp-for="City" class="form-control" required />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="Country" class="form-label fw-semibold">Страна</label>
+                    <input asp-for="Country" class="form-control" required />
+                </div>
+                
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label fw-semibold">Описание</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="col-12">
+                    <label asp-for="PhotoUrl" class="form-label fw-semibold">
+                        Ссылка на фото <span class="text-muted fw-normal">(необязательно)</span>
+                    </label>
+                    <input asp-for="PhotoUrl" class="form-control" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-plus-lg me-1"></i>Создать место проведения
+            </button>
+        </form>
+    </div>
+</div>

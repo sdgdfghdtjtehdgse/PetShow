@@ -1,0 +1,73 @@
+﻿@page
+@model PetShow.Areas.Identity.Pages.Account.RegisterModel
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container my-5" style="max-width:500px;">
+    <div class="ps-card p-4">
+        <div class="text-center mb-4">
+            <i class="bi bi-award-fill text-primary" style="font-size:2.5rem;"></i>
+            <h2 class="fw-bold mt-2 mb-0">Создать аккаунт</h2>
+            <p class="text-muted small">Присоединяйтесь к сообществу любителей питомцев!</p>
+        </div>
+
+        @if (Model.Errors.Any())
+        {
+            <div class="alert alert-danger">
+                <ul class="mb-0 ps-3">
+                    @foreach (var error in Model.Errors)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <form method="post" asp-page="/Account/Register" asp-area="Identity">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Полное имя</label>
+                <input type="text" name="Input.FullName" value="@Model.Input?.FullName"
+                       class="form-control" placeholder="Иван Иванов" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" name="Input.Email" value="@Model.Input?.Email"
+                       class="form-control" placeholder="вы@example.com" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Пароль</label>
+                <input type="password" name="Input.Password"
+                       class="form-control" placeholder="Минимум 8 символов" required />
+                <div class="form-text">
+                    Не менее 8 символов, включая цифру.
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Подтверждение пароля</label>
+                <input type="password" name="Input.ConfirmPassword"
+                       class="form-control" placeholder="Повторите пароль" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+                <i class="bi bi-person-plus me-1"></i>Зарегистрироваться
+            </button>
+        </form>
+
+        <hr />
+
+        <div class="text-center small text-muted">
+            Уже есть аккаунт?
+            <a asp-page="/Account/Login" asp-area="Identity" class="fw-semibold">
+                Войти
+            </a>
+        </div>
+    </div>
+</div>

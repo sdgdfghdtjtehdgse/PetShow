@@ -1,0 +1,229 @@
+﻿@model PetShow.Models.Post
+@{
+    ViewData["Title"] = Model.Title;
+    var userLikedPost    = (bool)(ViewBag.UserLikedPost ?? false);
+    var userLikedComment = ViewBag.UserLikedComment as Dictionary<int, bool> ?? new();
+    var currentUserId    = ViewBag.CurrentUserId as string;
+}
+
+@inject Microsoft.AspNetCore.Identity.UserManager<PetShow.Models.ApplicationUser> _userManager
+
+<div class="container my-5" style="max-width:780px;">
+    <a asp-controller="Community" asp-action="Index"
+       class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к ленте
+    </a>
+
+    <!-- ── Карточка поста ─────────────────────────────────────────────────── -->
+    <div class="ps-card p-4 mb-4">
+        @if (Model.IsPinned)
+        {
+            <span class="badge bg-warning text-dark mb-2">
+                <i class="bi bi-pin-angle-fill me-1"></i>Закреплено
+            </span>
+        }
+
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="d-flex align-items-center gap-3">
+                @if (!string.IsNullOrEmpty(Model.User.AvatarUrl))
+                {
+                    <img src="@Model.User.AvatarUrl" alt="@Model.User.FullName"
+                         class="rounded-circle"
+                         style="width:48px;height:48px;object-fit:cover;" />
+                }
+                else
+                {
+                    <div class="rounded-circle bg-light d-flex align-items-center
+                                justify-content-center"
+                         style="width:48px;height:48px;">
+                        <i class="bi bi-person-fill text-muted fs-5"></i>
+                    </div>
+                }
+                <div>
+                    <div class="fw-semibold">@Model.User.FullName</div>
+                    <div class="text-muted small">
+                        @Model.CreatedAt.ToString("dd MMMM yyyy · HH:mm")
+                    </div>
+                </div>
+            </div>
+
+            @if (User.Identity!.IsAuthenticated &&
+                 (Model.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin")))
+            {
+                <div class="d-flex gap-2">
+                    @if (Model.UserId == _userManager.GetUserId(User))
+                    {
+                        <a asp-controller="Community" asp-action="EditPost"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-pencil me-1"></i>Изменить
+                        </a>
+                    }
+                    <form method="post" asp-controller="Community"
+                          asp-action="DeletePost" asp-route-id="@Model.Id">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                onclick="return confirm('Удалить этот пост?')">
+                            <i class="bi bi-trash me-1"></i>Удалить
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+
+        <h2 class="fw-bold mb-3">@Model.Title</h2>
+
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="Изображение поста"
+                 class="img-fluid rounded mb-3"
+                 style="max-height:400px;width:100%;object-fit:cover;" />
+        }
+
+        <p class="text-muted" style="white-space:pre-line;">@Model.Body</p>
+
+        <!-- Кнопка лайка поста -->
+        <div class="d-flex align-items-center gap-3 mt-3 pt-3 border-top">
+            @if (User.Identity!.IsAuthenticated)
+            {
+                <form method="post" asp-controller="Community"
+                      asp-action="LikePost" asp-route-postId="@Model.Id">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            class="btn btn-sm @(userLikedPost ? "btn-danger" : "btn-outline-danger")">
+                        <i class="bi bi-heart@(userLikedPost ? "-fill" : "") me-1"></i>
+                        @Model.Likes.Count Нравится
+                    </button>
+                </form>
+            }
+            else
+            {
+                <span class="text-muted small">
+                    <i class="bi bi-heart-fill text-danger me-1"></i>
+                    @Model.Likes.Count Нравится
+                </span>
+            }
+            <span class="text-muted small">
+                <i class="bi bi-chat me-1"></i>
+                @Model.Comments.Count Комментари@(Model.Comments.Count == 1 ? "й" : Model.Comments.Count is >= 2 and <= 4 ? "я" : "ев")
+            </span>
+        </div>
+    </div>
+
+    <!-- ── Комментарии ────────────────────────────────────────────────────── -->
+    <div class="ps-card p-4">
+        <h5 class="fw-bold mb-4">
+            <i class="bi bi-chat-dots text-primary me-2"></i>
+            @Model.Comments.Count Комментари@(Model.Comments.Count == 1 ? "й" : Model.Comments.Count is >= 2 and <= 4 ? "я" : "ев")
+        </h5>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @if (Model.Comments.Any())
+        {
+            <div class="d-flex flex-column gap-3 mb-4">
+                @foreach (var c in Model.Comments.OrderBy(c => c.CreatedAt))
+                {
+                    var likedThisComment = userLikedComment.ContainsKey(c.Id) && userLikedComment[c.Id];
+                    <div class="d-flex gap-3">
+                        @if (!string.IsNullOrEmpty(c.User.AvatarUrl))
+                        {
+                            <img src="@c.User.AvatarUrl" alt="@c.User.FullName"
+                                 class="rounded-circle flex-shrink-0"
+                                 style="width:36px;height:36px;object-fit:cover;" />
+                        }
+                        else
+                        {
+                            <div class="rounded-circle bg-light d-flex align-items-center
+                                        justify-content-center flex-shrink-0"
+                                 style="width:36px;height:36px;">
+                                <i class="bi bi-person-fill text-muted small"></i>
+                            </div>
+                        }
+                        <div class="flex-grow-1">
+                            <div class="bg-light rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-semibold small">@c.User.FullName</span>
+                                    <span class="text-muted small">
+                                        @c.CreatedAt.ToString("dd MMM · HH:mm")
+                                    </span>
+                                </div>
+                                <p class="mb-0 small">@c.Body</p>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                @if (User.Identity!.IsAuthenticated)
+                                {
+                                    <form method="post" asp-controller="Community"
+                                          asp-action="LikeComment"
+                                          asp-route-commentId="@c.Id"
+                                          asp-route-postId="@Model.Id">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="btn btn-link btn-sm p-0 text-decoration-none
+                                                       @(likedThisComment ? "text-danger" : "text-muted")">
+                                            <i class="bi bi-heart@(likedThisComment ? "-fill" : "") me-1"></i>
+                                            @c.Likes.Count
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">
+                                        <i class="bi bi-heart-fill text-danger me-1"></i>@c.Likes.Count
+                                    </span>
+                                }
+
+                                @if (User.Identity!.IsAuthenticated &&
+                                     (c.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin")))
+                                {
+                                    <form method="post" asp-controller="Community"
+                                          asp-action="DeleteComment"
+                                          asp-route-id="@c.Id"
+                                          asp-route-postId="@Model.Id">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="btn btn-link btn-sm p-0 text-danger text-decoration-none"
+                                                onclick="return confirm('Удалить комментарий?')">
+                                            <i class="bi bi-trash me-1"></i>Удалить
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted small mb-4">Комментариев пока нет. Станьте первым!</p>
+        }
+
+        @if (User.Identity!.IsAuthenticated)
+        {
+            <form method="post" asp-controller="Community" asp-action="AddComment">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="postId" value="@Model.Id" />
+                <div class="input-group">
+                    <textarea name="body" class="form-control form-control-sm"
+                              rows="2" placeholder="Напишите комментарий..."
+                              required style="resize:none;"></textarea>
+                    <button type="submit" class="btn btn-primary btn-sm px-3">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <p class="text-muted small">
+                <a asp-area="Identity" asp-page="/Account/Login">Войдите</a>,
+                чтобы оставить комментарий.
+            </p>
+        }
+    </div>
+</div>

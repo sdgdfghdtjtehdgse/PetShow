@@ -1,0 +1,67 @@
+﻿@model PetShow.Models.Pet
+@{
+    ViewData["Title"] = "Добавить питомца";
+}
+
+<div class="container my-5" style="max-width:560px;">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i>Назад к профилю
+    </a>
+
+    <div class="ps-card p-4">
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-heart text-primary me-2"></i>Добавить питомца
+        </h2>
+
+        <form method="post" asp-action="AddPet">
+            @Html.AntiForgeryToken()
+
+            <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                    <label asp-for="Name" class="form-label fw-semibold">Кличка</label>
+                    <input asp-for="Name" class="form-control"
+                           placeholder="например, Барсик" required />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="Age" class="form-label fw-semibold">Возраст (лет)</label>
+                    <input asp-for="Age" type="number" min="0" max="30"
+                           class="form-control" required />
+                    <span asp-validation-for="Age" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="Species" class="form-label fw-semibold">Вид</label>
+                    <input asp-for="Species" class="form-control"
+                           placeholder="например, Кошка" required />
+                    <span asp-validation-for="Species" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="Breed" class="form-label fw-semibold">Порода</label>
+                    <input asp-for="Breed" class="form-control"
+                           placeholder="например, Сибирская" required />
+                    <span asp-validation-for="Breed" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PhotoUrl" class="form-label fw-semibold">
+                    Ссылка на фото <span class="text-muted fw-normal">(необязательно)</span>
+                </label>
+                <input asp-for="PhotoUrl" class="form-control"
+                       placeholder="https://example.com/фото-питомца.jpg" />
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Description" class="form-label fw-semibold">
+                    Описание <span class="text-muted fw-normal">(необязательно)</span>
+                </label>
+                <textarea asp-for="Description" class="form-control" rows="3"
+                          placeholder="Расскажите о своём питомце..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-plus-lg me-1"></i>Добавить питомца
+            </button>
+        </form>
+    </div>
+</div>
