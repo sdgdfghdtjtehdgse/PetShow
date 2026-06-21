@@ -42,6 +42,12 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var db = services.GetRequiredService<AppDbContext>();
     await db.Database.EnsureCreatedAsync();
+    try { await db.Shows.AnyAsync(); }
+    catch
+    {
+        await db.Database.EnsureDeletedAsync();
+        await db.Database.EnsureCreatedAsync();
+    }
     await SeedData.InitializeAsync(services);
 }
 
