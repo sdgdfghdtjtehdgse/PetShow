@@ -11,7 +11,7 @@ public static class SeedData
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
         // ── Создание роли ──────────────────────────────────
-        string[] roles = { "Admin", "Organizer", "User" };
+        string[] roles = { "Admin", "Organizer" };
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))

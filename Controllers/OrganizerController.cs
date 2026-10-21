@@ -143,7 +143,7 @@ public class OrganizerController : Controller
     {
         var userId  = _userManager.GetUserId(User)!;
         var isAdmin = User.IsInRole("Admin");
-        var show    = await _db.Shows.FindAsync(id);
+        var show    = _db.Shows.FindAsync(id);
 
         if (show == null) return null;
         if (isAdmin || show.OrganizerId == userId) return show;

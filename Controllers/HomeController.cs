@@ -18,7 +18,7 @@ public class HomeController : Controller
         // 3 Предстоящих шоу для показа на главной странице
         var upcomingShows = await _db.Shows
             .Include(s => s.Venue)
-            .Where(s => s.IsActive && s.StartDate >= DateTime.UtcNow)
+            .Where(s => s.IsActive && s.StartDate <= DateTime.UtcNow)
             .OrderBy(s => s.StartDate)
             .Take(3)
             .ToListAsync();

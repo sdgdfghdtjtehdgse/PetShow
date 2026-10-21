@@ -37,7 +37,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
         // ── Рейтинг: один рейтинг на одного питомца каждой выставки ───────────────────────
         builder.Entity<Ranking>()
-            .HasIndex(r => new { r.ShowId, r.Category, r.Position })
+            .HasIndex(r => new { r.ShowId, r.Position })
             .IsUnique();
 
         // ── Каскадное удаление: удаление записи приводит к удалению комментариев к ней ──────────────
@@ -45,7 +45,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(c => c.Post)
             .WithMany(p => p.Comments)
             .HasForeignKey(c => c.PostId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         // ── Один лайк на один пост для одного пользователя ────────────────────────────────────────
         builder.Entity<PostLike>()

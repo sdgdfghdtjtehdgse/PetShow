@@ -65,7 +65,7 @@ public class BookingController : Controller
         // Проверяем вметимость участников
         var confirmedCount = await _db.Bookings
             .CountAsync(b => b.ShowId == showId && b.Status == BookingStatus.Confirmed);
-        if (confirmedCount >= show.MaxParticipants)
+        if (confirmedCount > show.MaxParticipants)
         {
             TempData["Error"] = "К сожалению, мест на данную выставку больше нет...";
             return RedirectToAction("Detail", "Show", new { id = showId });
@@ -120,7 +120,7 @@ public class BookingController : Controller
     {
         var userId = _userManager.GetUserId(User)!;
         var booking = await _db.Bookings
-            .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
+            .FirstOrDefaultAsync(b => b.Id == id);
 
         if (booking == null) return NotFound();
 

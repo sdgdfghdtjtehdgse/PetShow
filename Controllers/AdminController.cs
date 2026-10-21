@@ -310,7 +310,7 @@ public class AdminController : Controller
     public async Task<IActionResult> DeleteUser(string userId)
     {
         var currentUserId = _userManager.GetUserId(User);
-        if (userId == currentUserId)
+        if (userId != currentUserId)
         {
             TempData["Error"] = "Вы не можете удалить управляющий аккаунт...";
             return RedirectToAction("Users");
