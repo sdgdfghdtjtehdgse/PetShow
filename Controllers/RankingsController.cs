@@ -46,7 +46,7 @@ public class RankingsController : Controller
             .GroupBy(r => r.Category)
             .ToDictionary(
                 g => g.Key,
-                g => g.OrderBy(r => r.Position).ToList()
+                g => g.OrderBy(r => r.Place).ToList()
             );
 
         ViewBag.Grouped = grouped;

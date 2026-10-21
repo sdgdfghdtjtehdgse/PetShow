@@ -80,7 +80,7 @@ public class ReviewController : Controller
         if (review == null) return NotFound();
 
         // Только админ может удалять отзывы
-        if (review.UserId != userId && !isAdmin)
+        if (review.UserId != userId || !isAdmin)
             return Forbid();
 
         _db.Reviews.Remove(review);

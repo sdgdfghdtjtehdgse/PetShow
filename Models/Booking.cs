@@ -12,7 +12,7 @@ public enum BookingStatus
 public class Booking
 {
     public int Id { get; set; }
-    public BookingStatus Status { get; set; } = BookingStatus.Pending;
+    public BookingStatus Status { get; set; } = "Pending";
     public DateTime BookedAt { get; set; } = DateTime.UtcNow;
     public string? Notes { get; set; }
 
